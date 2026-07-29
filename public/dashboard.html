@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Aplikasi Enterprise Custom</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root { --accent: #3B82F6; }
+        .sidebar { background: #1E293B; }
+    </style>
+</head>
+<body class="bg-gray-100 flex h-screen">
+    <aside class="w-64 sidebar text-white p-6">
+        <h1 class="text-xl font-bold mb-10">ERP System</h1>
+        <nav class="space-y-4">
+            <a href="#" class="block py-2 hover:text-blue-400" onclick="render('employees')">Karyawan</a>
+            <a href="#" class="block py-2 hover:text-blue-400" onclick="render('projects')">Proyek</a>
+        </nav>
+    </aside>
+
+    <main class="flex-1 p-8 overflow-y-auto">
+        <header class="flex justify-between items-center mb-8">
+            <h2 id="view-title" class="text-2xl font-bold text-gray-800">Dashboard</h2>
+            <button class="bg-blue-600 text-white px-4 py-2 rounded">Tambah Data</button>
+        </header>
+
+        <div id="content" class="bg-white p-6 rounded-lg shadow">
+            <!-- Dynamic Content -->
+        </div>
+    </main>
+
+    <script>
+        const state = {
+            employees: [{id: 1, name: "Andi Wijaya", role: "Manager", department: "IT", salary: 15000000}],
+            projects: [{id: 1, title: "Digital Transformation", budget: 500000000, status: "active"}]
+        };
+
+        function render(entity) {
+            const container = document.getElementById('content');
+            const data = state[entity];
+            document.getElementById('view-title').innerText = entity === 'employees' ? 'Karyawan' : 'Proyek';
+            
+            let html = `<table class="w-full text-left"><thead><tr>`;
+            Object.keys(data[0]).forEach(k => html += `<th class="p-2 border-b">${k.toUpperCase()}</th>`);
+            html += `</tr></thead><tbody>`;
+            data.forEach(row => {
+                html += `<tr>${Object.values(row).map(v => `<td class="p-2 border-b">${v}</td>`).join('')}</tr>`;
+            });
+            html += `</tbody></table>`;
+            container.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
