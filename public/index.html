@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Enterprise Custom</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { primary: '#3B82F6', dark: '#1E293B' } } } }
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <nav class="bg-dark text-white p-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">Aplikasi Enterprise Custom</h1>
+            <div class="space-x-4">
+                <button onclick="render('employees')" class="hover:text-primary">Karyawan</button>
+                <button onclick="render('projects')" class="hover:text-primary">Proyek</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-6">
+        <div id="app" class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+            <h2 id="title" class="text-2xl font-semibold mb-4">Dashboard</h2>
+            <div id="content">Memuat data...</div>
+        </div>
+    </main>
+
+    <script>
+        const state = {
+            employees: [],
+            projects: []
+        };
+
+        async function fetchData() {
+            try {
+                const res = await fetch('/api/data');
+                const data = await res.json();
+                Object.assign(state, data);
+                render('employees');
+            } catch (e) { console.error('Fetch fail', e); }
+        }
+
+        function render(entity) {
+            const container = document.getElementById('content');
+            const title = document.getElementById('title');
+            title.innerText = entity === 'employees' ? 'Data Karyawan' : 'Data Proyek';
+            
+            const items = state[entity];
+            container.innerHTML = `
+                <table class="w-full text-left border-collapse">
+                    <thead><tr class="border-b">${Object.keys(items[0] || {}).map(k => `<th class="p-2">${k.toUpperCase()}</th>`).join('')}</tr></thead>
+                    <tbody>${items.map(i => `<tr class="border-b hover:bg-gray-50">${Object.values(i).map(v => `<td class="p-2">${v}</td>`).join('')}</tr>`).join('')}</tbody>
+                </table>
+            `;
+        }
+
+        fetchData();
+    </script>
+</body>
+</html>
